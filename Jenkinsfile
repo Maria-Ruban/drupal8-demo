@@ -3,7 +3,8 @@ node('master') {
   echo 'Build complete for dev..'
 
   stage 'Deploy to Dev'
-  ansible-playbook /home/ubuntu/playbooks/deploy-to-dev
+  def stdout = sh(script: 'ansible-playbook /home/ubuntu/playbooks/deploy-to-dev', returnStdout: true)
+  println stdout
 }
 
   
