@@ -12,7 +12,7 @@ node('master') {
            from: 'prashanth@infanion',
            replyTo: 'prashanth@infanion.com',
            subject: 'Drupal 8 build successful',
-           to: 'venkat@infanion.com, prashanth@infanion.com'
+           to: 'i-guide@infanion.com'
     }
   } catch(err) {
     currentBuild.result = "FAILURE"
@@ -20,7 +20,7 @@ node('master') {
          from: 'prashanth@infanion',
          replyTo: 'prashanth@infanion.com',
          subject: 'Drupal 8 build failed',
-         to: 'venkat@infanion.com, prashanth@infanion.com'
+         to: 'i-guide@infanion.com'
     throw err
   }
 }
