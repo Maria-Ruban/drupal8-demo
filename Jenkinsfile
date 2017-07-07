@@ -8,7 +8,7 @@ node('master') {
     stage('Deploy to Dev') {
       def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-dev', returnStdout: true)
       println stdout
-      mail body: "Project build successful<br> Build number : ${env.BUILD_NUMBER}<br> Build URL : ${env.BUILD_URL}",
+      mail body: "Project build successful\n\r Build number : ${env.BUILD_NUMBER}\n\r Build URL : ${env.BUILD_URL}",
            from: 'prashanth@infanion',
            replyTo: 'prashanth@infanion.com',
            subject: 'Drupal 8 build successful',
