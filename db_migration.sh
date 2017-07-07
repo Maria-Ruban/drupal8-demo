@@ -1,5 +1,7 @@
 #!/bin/bash
 cd src
 
-#drush --yes
-drush cc all
+#drush --yes en features
+
+# Clear cache after db changes
+drush drush cache-rebuild
