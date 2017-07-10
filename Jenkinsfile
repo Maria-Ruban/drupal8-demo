@@ -4,7 +4,7 @@ node('master') {
     notifyStarted();
     stage('Build') {
       checkout scm
-      sh './vendor/bin/phing'
+      sh 'composer install && ./vendor/bin/phing'
     }
 
     // Deploy the code to the development environment.
