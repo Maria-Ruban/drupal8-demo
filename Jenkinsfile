@@ -30,11 +30,11 @@ node('master') {
     }
 
     def userInput
-    stage('Approve deploy to staging') {
+    stage('Approve deploy to uat') {
       try {
         userInput = input(
-          id: 'approve-deploy-to-staging', message: 'Approve deploy to staging env?', parameters: [
-            [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Promotion to staging.', name: 'I agree to deploy to staging.']
+          id: 'approve-deploy-to-uat', message: 'Approve deploy to uat env?', parameters: [
+            [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Promotion to uat.', name: 'I agree to deploy to uat.']
           ])
       } catch(err) { // input false
           def user = err.getCauses()[0].getUser()
@@ -43,10 +43,10 @@ node('master') {
       }
     }
     if (userInput == true) {
-      stage('Deploy to staging') {
+      stage('Deploy to uat') {
         waitUntil {
           try {
-            def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-staging', returnStdout: true)
+            def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-uat', returnStdout: true)
             println stdout
           } catch(error) {
              input "Retry the job ?"
@@ -55,8 +55,8 @@ node('master') {
         }
       }
 
-      stage('Test in staging') {
-        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-staging', returnStdout: true)
+      stage('Test in uat') {
+        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-uat', returnStdout: true)
         println stdout
       }
     } else {
