@@ -1,0 +1,16 @@
+{
+    "require-dev": {
+	"phing/phing": "*",
+        "phploc/phploc": "*",
+        "sebastian/phpcpd" : "*",
+        "phpmd/phpmd" : "@stable",
+        "phpunit/phpunit": "*",
+        "drupal/coder" : "dev-8.x-2.x",
+        "squizlabs/php_codesniffer": "*",
+	"behat/behat": "@stable",
+        "behat/mink": "@stable",
+        "behat/mink-extension": "@stable",
+        "behat/mink-selenium2-driver": "@stable",
+        "behat/mink-goutte-driver": "@stable"
+    }
+}
