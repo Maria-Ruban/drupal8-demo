@@ -39,6 +39,7 @@ node('master') {
     def userInput
     stage('Approve deploy to uat') {
       try {
+        approveUatDeployment()
         userInput = input(
           id: 'approve-deploy-to-uat', message: 'Approve deploy to uat env?', parameters: [
             [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Promotion to uat.', name: 'I agree to deploy to uat.']
@@ -76,6 +77,14 @@ node('master') {
          to: 'i-guide@infanion.com'
     throw err
   }
+}
+
+def approveUatDeployment() {
+  mail to: 'i-guide@infanion.com',
+  subject: "Job '${JOB_NAME}' (${BUILD_NUMBER}) is waiting for input",
+  body: "Please go to ${BUILD_URL} and verify the build"
+
+  slackSend (color: '#FFF000', message: "Waiting for approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_URL})")
 }
 
 def notifyStarted() {
