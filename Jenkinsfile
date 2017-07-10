@@ -24,10 +24,7 @@ node('master') {
     def userInput
     stage('Approve deploy to test') {
       try {
-          userInput = input(
-              id: 'Proceed1', message: 'Was this successful?', parameters: [
-              [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']
-              ])
+          userInput = input(id: 'approval-to-test', message: 'Approve deploy to test environment?')
       } catch(err) { // input false
           def user = err.getCauses()[0].getUser()
           userInput = false
@@ -35,17 +32,16 @@ node('master') {
       }
     }
     if (userInput == true) {
-      // do something
       echo "this was successful"
       stage('Deploy to staging') {
-        echo "Deploy to staging complete."
+        echo "Deploy to test environment complete."
       }
     } else {
-      // do something else
       echo "this was not successful"
       currentBuild.result = 'FAILURE'
     }    
   } catch(err) {
+    echo "Exception occured"
     currentBuild.result = "FAILURE"
     mail body: "Project build failure is here: ${env.BUILD_URL}" ,
          from: 'prashanth@infanion',
