@@ -17,6 +17,15 @@ node('master') {
            replyTo: 'prashanth@infanion.com',
            subject: 'Drupal 8 build successful',
            to: 'i-guide@infanion.com'
+
+      publishHTML (target: [
+        allowMissing: false,
+        alwaysLinkToLastBuild: false,
+        keepAll: true,
+        reportDir: 'build/reports/behat',
+        reportFiles: 'index.html',
+        reportName: "Behat Report"
+      ])
     }
     
     stage('Deploy to test') {
