@@ -6,17 +6,17 @@ node('master') {
       // Run the ansible-playbook from the Jenkins master server to login and deploy to the development environment.
       def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-dev', returnStdout: true)
       println stdout
-      // E-mail team that the deployment was successfull
-      mail body: "Project deployed successful\n\r Build number : ${env.BUILD_NUMBER}\n\r Build URL : ${env.BUILD_URL}",
-           from: 'prashanth@infanion',
-           replyTo: 'prashanth@infanion.com',
-           subject: 'Drupal 8 build successful',
-           to: 'i-guide@infanion.com'
     }
     // Build code and generate quality reports.
     stage('Build in Dev') {
       def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/build-in-dev', returnStdout: true)
       println stdout
+      // E-mail team that the deployment and build was successfull
+      mail body: "Project build successful\n\r Build number : ${env.BUILD_NUMBER}\n\r Build URL : ${env.BUILD_URL}",
+           from: 'prashanth@infanion',
+           replyTo: 'prashanth@infanion.com',
+           subject: 'Drupal 8 build successful',
+           to: 'i-guide@infanion.com'
     }
     
     stage('Deploy to test') {
