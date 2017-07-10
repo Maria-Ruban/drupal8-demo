@@ -1,26 +1,40 @@
 node('master') {
   currentBuild.result = "SUCCESS"
   try {
+    // Deploy the code to the development environment.
     stage('Deploy to Dev') {
+      // Run the ansible-playbook from the Jenkins master server to login and deploy to the development environment.
       def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-dev', returnStdout: true)
       println stdout
+      // E-mail team that the deployment was successfull
       mail body: "Project deployed successful\n\r Build number : ${env.BUILD_NUMBER}\n\r Build URL : ${env.BUILD_URL}",
            from: 'prashanth@infanion',
            replyTo: 'prashanth@infanion.com',
            subject: 'Drupal 8 build successful',
            to: 'i-guide@infanion.com'
     }
-    stage('Test in Dev') {
-      def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-dev', returnStdout: true)
+    // Build code and generate quality reports.
+    stage('Build in Dev') {
+      def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/build-in-dev', returnStdout: true)
+      println stdout
+    }
+    
+    stage('Deploy to test') {
+      def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-test', returnStdout: true)
+      println stdout
+    }
+
+    stage('Test in test') {
+      def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-test', returnStdout: true)
       println stdout
     }
 
     def userInput
-    stage('Approve deploy to test') {
+    stage('Approve deploy to staging') {
       try {
         userInput = input(
-          id: 'approve-deploy-to-test', message: 'Approve deploy to test env?', parameters: [
-            [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Testing', name: 'I agree to deploy to test.']
+          id: 'approve-deploy-to-staging', message: 'Approve deploy to staging env?', parameters: [
+            [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Promotion to staging.', name: 'I agree to deploy to staging.']
           ])
       } catch(err) { // input false
           def user = err.getCauses()[0].getUser()
@@ -29,13 +43,13 @@ node('master') {
       }
     }
     if (userInput == true) {
-      stage('Deploy to test') {
-        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-test', returnStdout: true)
+      stage('Deploy to staging') {
+        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-staging', returnStdout: true)
         println stdout
       }
 
-      stage('Test in test') {
-        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-test', returnStdout: true)
+      stage('Test in staging') {
+        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-staging', returnStdout: true)
         println stdout
       }
     } else {
