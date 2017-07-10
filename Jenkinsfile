@@ -44,8 +44,15 @@ node('master') {
     }
     if (userInput == true) {
       stage('Deploy to staging') {
-        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-staging', returnStdout: true)
-        println stdout
+        waitUntil {
+          try {
+            def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-staging', returnStdout: true)
+            println stdout
+          } catch(error) {
+             input "Retry the job ?"
+             false
+          }
+        }
       }
 
       stage('Test in staging') {
