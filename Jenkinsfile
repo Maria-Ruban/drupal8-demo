@@ -1,6 +1,8 @@
 node('master') {
   currentBuild.result = "SUCCESS"
   try {
+    notifyStarted();
+
     // Deploy the code to the development environment.
     stage('Deploy to Dev') {
       // Run the ansible-playbook from the Jenkins master server to login and deploy to the development environment.
@@ -18,14 +20,6 @@ node('master') {
            subject: 'Drupal 8 build successful',
            to: 'i-guide@infanion.com'
 
-      publishHTML (target: [
-        allowMissing: false,
-        alwaysLinkToLastBuild: false,
-        keepAll: true,
-        reportDir: 'build/reports/behat',
-        reportFiles: 'index.html',
-        reportName: "Behat Report"
-      ])
     }
     
     stage('Deploy to test') {
@@ -49,6 +43,7 @@ node('master') {
           def user = err.getCauses()[0].getUser()
           userInput = false
           echo "Aborted by: [${user}]"
+          notifyFailed()
       }
     }
     if (userInput == true) {
@@ -65,10 +60,11 @@ node('master') {
       def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-uat', returnStdout: true)
       println stdout
     }
-          
+    notifySuccessful();      
   } catch(err) {
     echo "Exception occured"
     currentBuild.result = "FAILURE"
+    notifyFailed()
     mail body: "Project build failure is here: ${env.BUILD_URL}" ,
          from: 'prashanth@infanion',
          replyTo: 'prashanth@infanion.com',
@@ -78,4 +74,14 @@ node('master') {
   }
 }
 
+def notifyStarted() {
+  slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+}
 
+def notifySuccessful() {
+  slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+}
+
+def notifyFailed() {
+  slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+}
