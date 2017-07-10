@@ -14,13 +14,14 @@ node('master') {
       def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-dev', returnStdout: true)
       println stdout
     }
-    stage 'Approve deploy to test' {
+
+    stage('Approve deploy to test') {
       timeout(time: 1, unit: 'HOURS') {
         input 'Deploy to staging?'
       }
     }
 
-    stage 'Deploy to staging' {
+    stage('Deploy to staging') {
       echo "Deploy to staging complete."
     }
   } catch(err) {
