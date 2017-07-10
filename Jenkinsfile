@@ -23,26 +23,23 @@ node('master') {
 
     def userInput
     stage('Approve deploy to test') {
-      steps { 
-        try {
-            userInput = input(id: 'approval-to-test', message: 'Approve deploy to test environment?')
-        } catch(err) { // input false
-            def user = err.getCauses()[0].getUser()
-            userInput = false
-            echo "Aborted by: [${user}]"
-        }
-        if (userInput == true) {
-          echo "this was successful"
-          stage('Deploy to staging') {
-            echo "Deploy to test environment complete."
-          }
-        } else {
-          echo "this was not successful"
-          currentBuild.result = 'FAILURE'
-        }       
+      try {
+          userInput = input(id: 'approval-to-test', message: 'Approve deploy to test environment?')
+      } catch(err) { // input false
+          def user = err.getCauses()[0].getUser()
+          userInput = false
+          echo "Aborted by: [${user}]"
       }
+      if (userInput == true) {
+        echo "this was successful"
+        stage('Deploy to staging') {
+          echo "Deploy to test environment complete."
+        }
+      } else {
+        echo "this was not successful"
+        currentBuild.result = 'FAILURE'
+      }       
     }
- 
   } catch(err) {
     echo "Exception occured"
     currentBuild.result = "FAILURE"
