@@ -15,15 +15,35 @@ node('master') {
       println stdout
     }
 
-    stage('Approve deploy to test') {
-      timeout(time: 1, unit: 'HOURS') {
-        input 'Deploy to staging?'
-      }
+    //stage('Approve deploy to test') {
+    //  timeout(time: 1, unit: 'HOURS') {
+    //    input 'Deploy to staging?'
+    //  }
+    //}
+
+    def userInput
+    try {
+        userInput = input(
+            id: 'Proceed1', message: 'Was this successful?', parameters: [
+            [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']
+            ])
+    } catch(err) { // input false
+        def user = err.getCauses()[0].getUser()
+        userInput = false
+        echo "Aborted by: [${user}]"
     }
 
-    stage('Deploy to staging') {
-      echo "Deploy to staging complete."
-    }
+    if (userInput == true) {
+      // do something
+      echo "this was successful"
+      stage('Deploy to staging') {
+        echo "Deploy to staging complete."
+      }
+    } else {
+      // do something else
+      echo "this was not successful"
+      currentBuild.result = 'FAILURE'
+    }    
   } catch(err) {
     currentBuild.result = "FAILURE"
     mail body: "Project build failure is here: ${env.BUILD_URL}" ,
@@ -35,4 +55,4 @@ node('master') {
   }
 }
 
-input
+
