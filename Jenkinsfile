@@ -2,6 +2,10 @@ node('master') {
   currentBuild.result = "SUCCESS"
   try {
     notifyStarted();
+    stage('Build') {
+      checkout scm
+      sh './vendor/bin/phing'
+    }
 
     // Deploy the code to the development environment.
     stage('Deploy to Dev') {
