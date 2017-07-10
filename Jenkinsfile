@@ -6,7 +6,7 @@ node('master') {
     // Build code and generate quality reports.
     stage('Quality check') {
       checkout scm
-      sh './vendor/bin/phing'
+      sh 'composer install && ./vendor/bin/phing'
     }
 
     // Deploy the code to the development environment.
