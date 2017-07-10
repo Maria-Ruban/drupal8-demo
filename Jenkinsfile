@@ -15,18 +15,12 @@ node('master') {
       println stdout
     }
 
-    //stage('Approve deploy to test') {
-    //  timeout(time: 1, unit: 'HOURS') {
-    //    input 'Deploy to staging?'
-    //  }
-    //}
-
     def userInput
     stage('Approve deploy to test') {
       try {
         userInput = input(
           id: 'approve-deploy-to-test', message: 'Approve deploy to test env?', parameters: [
-            [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Testing', name: 'Please confirm you agree with this']
+            [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Testing', name: 'I agree to deploy to test.']
           ])
       } catch(err) { // input false
           def user = err.getCauses()[0].getUser()
@@ -35,12 +29,17 @@ node('master') {
       }
     }
     if (userInput == true) {
-      echo "this was successful"
-      stage('Deploy to staging') {
-        echo "Deploy to test environment complete."
+      stage('Deploy to test') {
+        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-test', returnStdout: true)
+        println stdout
+      }
+
+      stage('Test in test') {
+        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-test', returnStdout: true)
+        println stdout
       }
     } else {
-      echo "this was not successful"
+      echo "Did not receive approval."
       currentBuild.result = 'FAILURE'
     }       
   } catch(err) {
