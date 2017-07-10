@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'WebDriver' => array($vendorDir . '/instaclick/php-webdriver/lib'),
+    'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'PHPMD\\' => array($vendorDir . '/phpmd/phpmd/src/main/php'),
     'Behat\\Transliterator' => array($vendorDir . '/behat/transliterator/src'),

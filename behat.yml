@@ -1,5 +1,15 @@
 default:
+  formatters:
+    html:
+      output_path: build/reports/behat
   extensions:
+    emuse\BehatHTMLFormatter\BehatHTMLFormatterExtension:
+      name: html
+      renderer: Twig,Behat2
+      file_name: index
+      print_args: true
+      print_outp: true
+      loop_break: true
     Behat\MinkExtension:
       base_url: "http://localhost"
       sessions:
