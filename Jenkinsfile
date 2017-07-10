@@ -44,25 +44,19 @@ node('master') {
     }
     if (userInput == true) {
       stage('Deploy to uat') {
-        waitUntil {
-          try {
-            def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-uat', returnStdout: true)
-            println stdout
-          } catch(error) {
-             input "Retry the job ?"
-             false
-          }
-        }
-      }
-
-      stage('Test in uat') {
-        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-uat', returnStdout: true)
+        def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-uat', returnStdout: true)
         println stdout
       }
     } else {
       echo "Did not receive approval."
       currentBuild.result = 'FAILURE'
-    }       
+    } 
+
+    stage('Test in uat') {
+      def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-uat', returnStdout: true)
+      println stdout
+    }
+          
   } catch(err) {
     echo "Exception occured"
     currentBuild.result = "FAILURE"
