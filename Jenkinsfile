@@ -84,7 +84,7 @@ def approveUatDeployment() {
   subject: "Job '${JOB_NAME}' (${BUILD_NUMBER}) is waiting for input",
   body: "Please go to ${BUILD_URL} and verify the build"
 
-  slackSend (color: '#FFF000', message: "Waiting for approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_URL})")
+  slackSend (color: '#FFF000', message: "Waiting for approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_URL}/${env.BUILD_NUMBER}/input)")
 }
 
 def notifyStarted() {
