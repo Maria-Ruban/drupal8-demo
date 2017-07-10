@@ -3,17 +3,23 @@ node('master') {
   try {
     notifyStarted();
 
-    // Build code and generate quality reports.
-    stage('Quality check') {
-      checkout scm
-      sh 'composer install && ./vendor/bin/phing'
-    }
-
     // Deploy the code to the development environment.
     stage('Deploy to Dev') {
       // Run the ansible-playbook from the Jenkins master server to login and deploy to the development environment.
       def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-dev', returnStdout: true)
       println stdout
+    }
+    // Build code and generate quality reports.
+    stage('Build in Dev') {
+      def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/build-in-dev', returnStdout: true)
+      println stdout
+      // E-mail team that the deployment and build was successfull
+      mail body: "Project build successful\n\r Build number : ${env.BUILD_NUMBER}\n\r Build URL : ${env.BUILD_URL}",
+           from: 'prashanth@infanion',
+           replyTo: 'prashanth@infanion.com',
+           subject: 'Drupal 8 build successful',
+           to: 'i-guide@infanion.com'
+
     }
     
     stage('Deploy to test') {
@@ -59,6 +65,11 @@ node('master') {
     echo "Exception occured"
     currentBuild.result = "FAILURE"
     notifyFailed()
+    mail body: "Project build failure is here: ${env.BUILD_URL}" ,
+         from: 'prashanth@infanion',
+         replyTo: 'prashanth@infanion.com',
+         subject: 'Drupal 8 build failed',
+         to: 'i-guide@infanion.com'
     throw err
   }
 }
@@ -69,22 +80,8 @@ def notifyStarted() {
 
 def notifySuccessful() {
   slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-
-  // E-mail team that the deployment and build was successfull
-  mail body: "Project build successful\n\r Build number : ${env.BUILD_NUMBER}\n\r Build URL : ${env.BUILD_URL}",
-       from: 'prashanth@infanion',
-       replyTo: 'prashanth@infanion.com',
-       subject: 'Drupal 8 build successful',
-       to: 'i-guide@infanion.com'
-
 }
 
 def notifyFailed() {
   slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-
-  mail body: "Project build failure is here: ${env.BUILD_URL}" ,
-       from: 'prashanth@infanion',
-       replyTo: 'prashanth@infanion.com',
-       subject: 'Drupal 8 build failed',
-       to: 'i-guide@infanion.com'
 }
