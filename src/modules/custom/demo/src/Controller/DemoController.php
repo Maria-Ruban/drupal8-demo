@@ -8,13 +8,12 @@ namespace Drupal\demo\Controller;
 class DemoController {
 
   /**
-   * Returns a Hello world page.
    *
    * @return array
    *   A simple renderable array.
    */
   public function helloWorld() {
-    $element = ['#markup' => 'Hello world!'];
+    $element = ['#markup' => 'Hello world DevOps!'];
     return $element;
   }
 
