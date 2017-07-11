@@ -1,0 +1,29 @@
+name: 'Database configuration'
+description: 'Feature to track database changes.'
+type: module
+core: 8.x
+dependencies:
+  - block
+  - block_content
+  - ckeditor
+  - comment
+  - contact
+  - editor
+  - field
+  - file
+  - filter
+  - help
+  - image
+  - node
+  - path
+  - rdf
+  - search
+  - shortcut
+  - system
+  - taxonomy
+  - text
+  - tour
+  - user
+  - views
+  - views_ui
+version: 8.x-1.0
