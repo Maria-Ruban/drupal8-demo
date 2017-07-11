@@ -58,6 +58,9 @@
               <arg path="${codedir}"></arg>
               <arg value="--standard=Drupal"></arg>
               <arg value="--report-full=${phpcsdir}/output.txt"></arg>
+              <arg value="--runtime-set"></arg>
+              <arg value="ignore_warnings_on_exit"></arg>
+              <arg value="1"></arg>
             </exec>
           </try>
           <catch>
