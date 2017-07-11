@@ -8,6 +8,7 @@ namespace Drupal\demo\Controller;
 class DemoController {
 
   /**
+   * Display hello world page.
    *
    * @return array
    *   A simple renderable array.
