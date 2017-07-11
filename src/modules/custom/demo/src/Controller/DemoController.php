@@ -14,7 +14,7 @@ class DemoController {
    *   A simple renderable array.
    */
   public function helloWorld() {
-    $element = ['#markup' => 'Hello world DevOps!'];
+    $element = ['#markup' => 'Hello world!'];
     return $element;
   }
 
