@@ -2,9 +2,16 @@ node('master') {
   currentBuild.result = "SUCCESS"
   try {
     notifyStarted();
+    // Build code and generate quality reports.
     stage('Build') {
       checkout scm
       sh 'composer install && ./vendor/bin/phing'
+      // E-mail team that the deployment and build was successfull
+      mail body: "Project build successful\n\r Build number : ${env.BUILD_NUMBER}\n\r Build URL : ${env.BUILD_URL}",
+           from: 'prashanth@infanion',
+           replyTo: 'prashanth@infanion.com',
+           subject: 'Drupal 8 build successful',
+           to: 'i-guide@infanion.com'
     }
 
     // Deploy the code to the development environment.
@@ -13,19 +20,14 @@ node('master') {
       def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-dev', returnStdout: true)
       println stdout
     }
-    // Build code and generate quality reports.
-    stage('Build in Dev') {
-      def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/build-in-dev', returnStdout: true)
-      println stdout
-      // E-mail team that the deployment and build was successfull
-      mail body: "Project build successful\n\r Build number : ${env.BUILD_NUMBER}\n\r Build URL : ${env.BUILD_URL}",
-           from: 'prashanth@infanion',
-           replyTo: 'prashanth@infanion.com',
-           subject: 'Drupal 8 build successful',
-           to: 'i-guide@infanion.com'
 
+    // Test features in dev environment.
+    stage('Test in dev') {
+      def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-dev', returnStdout: true)
+      println stdout
     }
     
+    // Deploy the build to the test environment.
     stage('Deploy to test') {
       def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/deploy-to-test', returnStdout: true)
       println stdout
@@ -65,7 +67,7 @@ node('master') {
       def stdout = sh(script: 'ansible-playbook /var/lib/jenkins/playbooks/test-deploy-in-uat', returnStdout: true)
       println stdout
     }
-    notifySuccessful();      
+    notifySuccessful();
   } catch(err) {
     echo "Exception occured"
     currentBuild.result = "FAILURE"
