@@ -5,12 +5,14 @@
  * Custom demo module for Drupal 8.
  */
 
-
+/**
+ * Implements hook_menu().
+ */
 function demo_menu() {
   // The paths given here need to match the ones in example.routing.yml exactly.
   $items['/hello-world'] = [
     'title' => 'Hello World',
- 'description' => 'This is a hello world page.',
+    'description' => 'This is a hello world page.',
     'route' => 'demo.hello_world',
   ];
   return $items;
