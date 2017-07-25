@@ -1,5 +1,6 @@
 <?php
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -19,5 +20,37 @@ class FeatureContext extends MinkContext implements Context
      */
     public function __construct()
     {
+    }
+
+    /**
+     * @When I fill :arg1 with :arg2
+     */
+    public function iFillWith($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When I fill :arg1 with "password
+     */
+    public function iFillWithPassword($arg1)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Given I wait for the :arg1 to appear
+     */
+    public function iWaitForTheToAppear($arg1)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Given I wait for the Log in to appear
+     */
+    public function iWaitForTheLogInToAppear()
+    {
+        throw new PendingException();
     }
 }
